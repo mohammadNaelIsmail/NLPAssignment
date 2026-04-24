@@ -25,6 +25,7 @@ public class FeatureFactory {
      * is the word you are adding features for. PreviousLabel must be the
      * only label that is visible to this method. 
      */
+	// baseline model F1 score is 0.18
     private List<String> computeFeatures(List<String> words,
 					 String previousLabel, int position) {
 
@@ -33,16 +34,13 @@ public class FeatureFactory {
         features.add("w=" + w);
         features.add("prevLabel=" + previousLabel);
 
-        // ===== Bias (مهم لرفع recall) =====
         features.add("bias_PERSON_ٍSTRONG");
 
-        // ===== Prefix / Suffix =====
         if (w.length() > 3) {
             features.add("p3=" + w.substring(0,3));
             features.add("s3=" + w.substring(w.length()-3));
         }
 
-        // ===== Context =====
         if (position > 0) {
             String prev = words.get(position-1);
             features.add("prev=" + prev);
@@ -54,12 +52,10 @@ public class FeatureFactory {
             features.add("next=" + next);
         }
         features.add("label_word=" + previousLabel + "_" + w);
-        // ===== احتمالية اسم (يزيد recall) =====
         if (w.length() > 2) {
             features.add("maybeName");
         }
 
-        // ===== دعم أسماء عربية =====
         if (w.equals("بن") || w.equals("ابن")) {
             features.add("isBin");
         }
@@ -79,7 +75,6 @@ public class FeatureFactory {
             features.add("not_stopword_candidate");
         }
 
-        // ===== Label interaction (قوي) =====
         if (previousLabel.contains("PERSON")) {
             features.add("continue_PERSON");
         }
